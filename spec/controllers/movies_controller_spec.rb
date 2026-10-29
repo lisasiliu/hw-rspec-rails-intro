@@ -71,6 +71,24 @@ describe MoviesController, type: :controller do
     end
   end
 
+  describe 'creating and updating movies from the forms' do
+    let(:form_params) do
+      { title: 'Manhunter', rating: 'R',
+        'release_date(1i)' => '1986', 'release_date(2i)' => '8', 'release_date(3i)' => '15' }
+    end
+    it 'creates a movie from the new movie form' do
+      expect { post :create, params: { movie: form_params } }.to change(Movie, :count).by(1)
+      expect(response).to redirect_to(movies_path)
+      expect(flash[:notice]).to eq('Manhunter was successfully created.')
+    end
+    it 'updates a movie from the edit form' do
+      movie = Movie.create!(title: 'Old', rating: 'G', release_date: Date.new(1990, 1, 1))
+      put :update, params: { id: movie.id, movie: form_params }
+      expect(movie.reload.title).to eq('Manhunter')
+      expect(response).to redirect_to(movie_path(movie))
+    end
+  end
+
   describe 'adding a movie found on TMDb' do
     let(:movie_params) do
       { title: 'Sydney 2000 Olympics Opening Ceremony', rating: 'R',
