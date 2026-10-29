@@ -3,7 +3,8 @@ class Movie < ApplicationRecord
     %w[G PG PG-13 R]
   end
 
-  def self.find_in_tmdb(search_terms)
+  def self.find_in_tmdb(string)
+    Faraday.get(string)
   end
 
   def self.with_ratings(ratings, sort_by)
